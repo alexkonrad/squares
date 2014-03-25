@@ -11,14 +11,14 @@
   var Square = Squares.Square = function (options) {
     this._el = document.createElement('article');
     this._el.setAttribute('class', 'square');
-    this._el.style.cssText = "position: absolute; width: 100px; height: 100px; z-index: 99;";
+    this._el.style.cssText = "position: absolute;";
+    this._el.style.width = SQUARE_WIDTH;
+    this._el.style.height = SQUARE_HEIGHT;
     this._el.style.left = options.x
     this._el.style.top = options.y
     this._el.style.background = options.color
     this._speed = options.speed;
     this._dir = options.dir;
-    
-    // this._addListener();
   };
   
   Square.prototype._getPos = function () {
@@ -40,22 +40,18 @@
     newPos[1] = curPos[1] + (this._dir[1] * this._speed[1]);   
     
     this._setPos(newPos);
-    
-    // redraw them all at once instead
-    // this._redraw();
   }
   
   Square.prototype._checkBounds = function () {
-    var curPos = this._getPos();
-    
-    if (curPos[0] < 0) {
-      this._dir[0] = 1;
-    } else if (curPos[0] > WINDOW_WIDTH - parseInt(this._el.style.width)) {
-      this._dir[0] = -1;
-    } else if (curPos[1] > WINDOW_HEIGHT - parseInt(this._el.style.height)) {
-      this._dir[1] = -1;
-    } else if (curPos[1] < 0) {
-      this._dir[1] = 1;
+    var currentPos = this._getPos();
+    var borderRight = WINDOW_WIDTH - parseInt(this._el.style.width);
+    var borderBottom = WINDOW_HEIGHT - parseInt(this._el.style.height);
+        
+    // reverse direction if necessary
+    if (currentPos[0] < 0 || currentPos[0] > borderRight) {
+      this._dir[0] *= -1;
+    } else if (currentPos[1] < 0 || currentPos[1] > borderBottom) {
+      this._dir[1] *= -1;
     }
   }
   
@@ -84,12 +80,10 @@
   
   
   function renderSquares() {
-    
-    // remove all child nodes
-    var container = document.querySelector('section');
-    
-    while(container.hasChildNodes()) {
-      container.removeChild(container.firstChild);
+    var $section = document.querySelector('section');
+
+    while($section.hasChildNodes()) {
+      $section.removeChild($section.firstChild);
     }
     
     squares.forEach(function(square) { 
@@ -97,7 +91,7 @@
       fragment.appendChild(square._el);
     }); 
     
-    document.querySelector('section').appendChild(fragment.cloneNode(true));
+    $section.appendChild(fragment.cloneNode(true));
     
     requestAnimationFrame(renderSquares);
     
