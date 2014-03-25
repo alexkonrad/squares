@@ -11,7 +11,7 @@
   var Square = Squares.Square = function (options) {
     this._el = document.createElement('article');
     this._el.setAttribute('class', 'square');
-    this._el.style.cssText = "position: absolute; width: 100px; height: 100px";
+    this._el.style.cssText = "position: absolute; width: 100px; height: 100px; z-index: 99;";
     this._el.style.left = options.x
     this._el.style.top = options.y
     this._el.style.background = options.color
@@ -62,10 +62,9 @@
   window.onload = function () {
     startSquares();
     
-    document.querySelector('section').addEventListener('click',function(event){
+    document.querySelector('section').addEventListener('mousedown' ,function(event){
       event.preventDefault();
-      console.log(event.target)
-      // console.log(event.target.tagName)
+      console.log(event.target.tagName)
       if(event.target.tagName.toLowerCase() == 'article'){
        addSquare();
       }
@@ -109,8 +108,5 @@
     addSquare();
     
     renderSquares();
-    
-    window.setInterval(function () { 
-    }, 200)
   }
 })(this);
