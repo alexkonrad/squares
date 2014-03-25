@@ -3,15 +3,22 @@
   
   var WINDOW_WIDTH = 900;
   var WINDOW_HEIGHT = 700;
+  var SQUARE_WIDTH = 100;
+  var SQUARE_HEIGHT = 100;
+  var squares = Squares.squares = [];
+  var fragment = document.createDocumentFragment();
   
   var Square = Squares.Square = function (options) {
-    this._el = document.createElement('article'); 
+    this._el = document.createElement('article');
+    this._el.setAttribute('class', 'square');
     this._el.style.cssText = "position: absolute; width: 100px; height: 100px";
     this._el.style.left = options.x
     this._el.style.top = options.y
     this._el.style.background = options.color
     this._speed = options.speed;
     this._dir = options.dir;
+    
+    // this._addListener();
   };
   
   Square.prototype._getPos = function () {
@@ -34,7 +41,8 @@
     
     this._setPos(newPos);
     
-    this._redraw();
+    // redraw them all at once instead
+    // this._redraw();
   }
   
   Square.prototype._checkBounds = function () {
@@ -51,23 +59,58 @@
     }
   }
   
-  Square.prototype._redraw = function () {
-    document.body.appendChild(this._el);
-  }
-  
   window.onload = function () {
     startSquares();
+    
+    document.querySelector('section').addEventListener('click',function(event){
+      event.preventDefault();
+      console.log(event.target)
+      // console.log(event.target.tagName)
+      if(event.target.tagName.toLowerCase() == 'article'){
+       addSquare();
+      }
+    }, false);
   };
+  
+  function addSquare() {
+    squares.push(new Square({
+      x : Math.random() * (WINDOW_WIDTH - SQUARE_WIDTH),
+      y : Math.random() * (WINDOW_HEIGHT - SQUARE_HEIGHT),
+      color: '#'+(Math.random()*0xFFFFFF<<0).toString(16),
+      speed: [1 + Math.random(), 1 + Math.random()], 
+      dir: [1,1]
+    }));
+  }
+  
+  
+  
+  function renderSquares() {
+    
+    // remove all child nodes
+    var container = document.querySelector('section');
+    
+    while(container.hasChildNodes()) {
+      container.removeChild(container.firstChild);
+    }
+    
+    squares.forEach(function(square) { 
+      square.move();
+      fragment.appendChild(square._el);
+    }); 
+    
+    document.querySelector('section').appendChild(fragment.cloneNode(true));
+    
+    requestAnimationFrame(renderSquares);
+    
+  }
 
   function startSquares () {
-    var square = new Square({
-      x : 300,
-      y : 250,
-      color: '#'+(Math.random()*0xFFFFFF<<0).toString(16),
-      speed: [2 + Math.random(), 2 + Math.random()], dir: [1,1]
-    });
-    window.setInterval(function () {  
-      square.move();
-    }, 10)
+    
+    addSquare();
+    
+    renderSquares();
+    
+    window.setInterval(function () { 
+    }, 200)
   }
 })(this);
