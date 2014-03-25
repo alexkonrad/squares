@@ -1,6 +1,9 @@
 (function(root) {
   var Squares = root.Squares = (root.Squares || {})
   
+  var WINDOW_WIDTH = 900;
+  var WINDOW_HEIGHT = 700;
+  
   var Square = Squares.Square = function (options) {
     this._el = document.createElement('article'); 
     this._el.style.cssText = "position: absolute; width: 100px; height: 100px";
@@ -24,27 +27,31 @@
     var curPos = this._getPos();
     var newPos = new Array();
     
+    this._checkBounds();
+    
     newPos[0] = curPos[0] + (this._dir[0] * this._speed[0]);
     newPos[1] = curPos[1] + (this._dir[1] * this._speed[1]);   
     
     this._setPos(newPos);
+    
+    this._redraw();
   }
   
-  Square.prototype.getBounds = function () {
+  Square.prototype._checkBounds = function () {
     var curPos = this._getPos();
     
     if (curPos[0] < 0) {
       this._dir[0] = 1;
-    } else if (curPos[0] > 800) {
+    } else if (curPos[0] > WINDOW_WIDTH - parseInt(this._el.style.width)) {
       this._dir[0] = -1;
-    } else if (curPos[1] > 600) {
+    } else if (curPos[1] > WINDOW_HEIGHT - parseInt(this._el.style.height)) {
       this._dir[1] = -1;
     } else if (curPos[1] < 0) {
       this._dir[1] = 1;
     }
   }
   
-  Square.prototype.redraw = function () {
+  Square.prototype._redraw = function () {
     document.body.appendChild(this._el);
   }
   
@@ -60,9 +67,7 @@
       speed: [2 + Math.random(), 2 + Math.random()], dir: [1,1]
     });
     window.setInterval(function () {  
-      square.getBounds();
       square.move();
-      square.redraw();
     }, 10)
   }
 })(this);
