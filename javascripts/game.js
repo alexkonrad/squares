@@ -30,16 +30,11 @@
     };
     
     function _addSquare(x, y, id) {
-        function sign () { 
-            return Math.random() < .5 ? -1 : 1; 
-        }
         squares.push(new Squares.Square({
-            id: id,
-            x : x,
-            y : y,
+            id: id, x : x, y : y,
             color: '#'+(Math.random()*0xFFFFFF<<0).toString(16),
             speed: [Squares.MIN_SPEED + Math.random(), Squares.MIN_SPEED + Math.random()], 
-            dir: [sign(), -1]
+            dir: [Math.random() < .5 ? -1 : 1, -1]
         }));
     }
 
