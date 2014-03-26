@@ -8,6 +8,8 @@
     var Square = Squares.Square = function (options) {
         this._speed = options.speed;
         this._dir = options.dir;
+        this._window_width = options.width;
+        this._window_height = options.height;
 
         this._el = document.createElement('article');
         this._el.setAttribute('id', options.id)
@@ -39,8 +41,8 @@
 
     Square.prototype._checkBounds = function () {
         var currentPos = this._getPos();
-        var borderRight = WINDOW_WIDTH - TILE_WIDTH;
-        var borderBottom = WINDOW_HEIGHT - TILE_HEIGHT;
+        var borderRight = this._window_width - TILE_WIDTH;
+        var borderBottom = this._window_height - TILE_HEIGHT;
 
         // reverse direction if necessary
         if (currentPos[0] < 0 || currentPos[0] > borderRight) {

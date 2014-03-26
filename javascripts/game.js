@@ -2,53 +2,87 @@
     var Game = root.Game = (root.Game || {})
     TILE_WIDTH = Squares.TILE_WIDTH;
     TILE_HEIGHT = Squares.TILE_HEIGHT;
-    var squares = Squares.squares = [];
-    var $section = undefined;
     var $fragment = document.createDocumentFragment();
-
-    window.onload = function () {
-        WINDOW_WIDTH = document.body.offsetWidth;
-        WINDOW_HEIGHT = document.body.offsetHeight;
-        $section = document.querySelector('section');
-
-        document.styleSheets[0].insertRule('article { width: ' + TILE_WIDTH + '; height: ' + TILE_HEIGHT + ' }', 0);
-
-        _addSquare(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 0);
-        _renderSquares();
-
-        document.querySelector('section').addEventListener(
+    
+    var Session = Game.Session = function (options) {
+        this.$el = options.$el || document.body;
+        this.squares = [];
+        this._window_width = options.width || 800;
+        this._window_height = options.height || 600;
+        
+        var that = this;
+        this.$el.addEventListener(
             'mousedown',
-            function(event) {
+            function (event) {
                 event.preventDefault();
                 if(event.target.tagName.toLowerCase() === 'article'){
-                    squares[event.target.id]._dir[1] = -1;
-                    _addSquare(event.pageX, event.pageY, squares.length);
+                    that.squares[event.target.id]._dir[1] = -1;
+                    that._addSquare(event.pageX, event.pageY, that.squares.length);
                 }
             },
             false
         );
     };
     
-    function _addSquare(x, y, id) {
-        squares.push(new Squares.Square({
+    Session.prototype.initialize = function () {
+        // render a demo screen
+        for (var i = 0; i < 250; i++) {
+            this._addSquare(
+                parseInt(this._window_width * Math.random()),
+                parseInt(this._window_height * Math.random()),
+                i
+            );
+        }
+        
+        this._renderSquares();
+        
+        document.body.className = "overlay";
+        
+        var $intro = document.getElementById('intro-screen');
+        $intro.style.display = "block"
+        document.styleSheets[0].insertRule('#intro-screen { display: block; }');
+        
+        var that = this;
+        document.querySelector('button').addEventListener(
+            'click',
+            function (event) {
+                event.preventDefault();
+                document.body.className = "";
+                $intro.style.display = "none";
+                that.squares.length = 0;
+                
+                $fragment = document.createDocumentFragment();
+                
+                that._addSquare(that._window_width/2, that._window_height/2, 0);
+                that._renderSquares();
+            },
+            false
+        );
+        
+    }
+    
+    Session.prototype._addSquare = function (x, y, id) {
+        this.squares.push(new Squares.Square({
             id: id, x : x, y : y,
             color: '#'+(Math.random()*0xFFFFFF<<0).toString(16),
             speed: [Squares.MIN_SPEED + Math.random(), Squares.MIN_SPEED + Math.random()], 
-            dir: [Math.random() < .5 ? -1 : 1, -1]
+            dir: [Math.random() < .5 ? -1 : 1, -1],
+            width: this._window_width,
+            height: this._window_height
         }));
     }
 
-    function _renderSquares() {
-        while($section.hasChildNodes()) {
-            $section.removeChild($section.firstChild);
+    Session.prototype._renderSquares = function () {
+        while(this.$el && this.$el.hasChildNodes()) {
+            this.$el.removeChild(this.$el.firstChild);
         }
 
-        squares.forEach(function(square) { 
+        this.squares.forEach(function(square) { 
             square.move();
             $fragment.appendChild(square._el);
         }); 
 
-        $section.appendChild($fragment.cloneNode(true));
-        requestAnimationFrame(_renderSquares);
+        this.$el && this.$el.appendChild($fragment.cloneNode(true));
+        requestAnimationFrame(this._renderSquares.bind(this));
     }
 })(this);

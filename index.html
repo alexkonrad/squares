@@ -5,8 +5,30 @@
   <script src="javascripts/game.js"></script>
 </head>
 <body>
+  <div id="intro-screen">
+    <h1>Squares</h1>
+    <p>Don't let a tile hit the ground!</p>
+    <p>Click on a tile to make it float back up</p>
+    <p>But clicking it will also clone it!</p>
+    <button>Start Playing</button>
+  </div>
   <section>
     <!-- container for the tiles -->
   </section>
+
+  <script>
+    window.onload = function () {
+        var $section = document.querySelector('section');
+        var game = new Game.Session({
+          $el: $section,
+          width: document.body.offsetWidth,
+          height: document.body.offsetHeight
+        });
+        
+        game.initialize();
+
+        document.styleSheets[0].insertRule('article { width: ' + TILE_WIDTH + '; height: ' + TILE_HEIGHT + ' }', 0);
+    };
+  </script>
 </body>
 </html>
