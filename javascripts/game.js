@@ -1,7 +1,7 @@
 (function(root) {
     var Game = root.Game = (root.Game || {})
-    TILE_WIDTH = Squares.TILE_WIDTH;
-    TILE_HEIGHT = Squares.TILE_HEIGHT;
+    var TILE_WIDTH = Squares.TILE_WIDTH;
+    var TILE_HEIGHT = Squares.TILE_HEIGHT;
     var $fragment = document.createDocumentFragment();
     
     var Session = Game.Session = function (options) {
@@ -17,36 +17,59 @@
                 event.preventDefault();
                 if(event.target.tagName.toLowerCase() === 'article'){
                     that.squares[event.target.id]._dir[1] = -1;
-                    that._addSquare(event.pageX, event.pageY, that.squares.length);
+                    that._addSquare(
+                        event.pageX,
+                        event.pageY,
+                        that.squares.length
+                    );
                 }
             },
             false
         );
     };
     
+    
+    // renders a startup screen and starts game play
     Session.prototype.initialize = function () {
-        // render a demo screen
-        for (var i = 0; i < 250; i++) {
-            this._addSquare(
-                parseInt(this._window_width * Math.random()),
-                parseInt(this._window_height * Math.random()),
+        var i = 0;
+        var that = this;
+        var tiles = setInterval(function () {
+            that._addSquare(
+                parseInt((that._window_width - TILE_WIDTH) * Math.random()),
+                parseInt((that._window_height - TILE_HEIGHT) * Math.random()),
                 i
             );
-        }
+            i += 1;
+        }, 5)
         
         this._renderSquares();
         
         document.body.className = "overlay";
+        document.styleSheets[0].insertRule('article { width: ' + TILE_WIDTH + '; height: ' + TILE_HEIGHT + ' }', 0);
         
         var $intro = document.getElementById('intro-screen');
         $intro.style.display = "block"
         document.styleSheets[0].insertRule('#intro-screen { display: block; }');
+        
+        var titleFlicker = setInterval(function() {
+               var val = 1;
+               if (Math.random() > 0.5) {
+                   val = Math.floor((Math.random()*10)+1);
+               }
+               
+               document.querySelector('h1').style.textShadow = "white 0 0 " + val + "px"
+                
+        }, 150);
         
         var that = this;
         document.querySelector('button').addEventListener(
             'click',
             function (event) {
                 event.preventDefault();
+                
+                window.clearInterval(titleFlicker);
+                window.clearInterval(tiles);
+                
                 document.body.className = "";
                 $intro.style.display = "none";
                 that.squares.length = 0;
@@ -61,11 +84,11 @@
         
     }
     
-    Session.prototype._addSquare = function (x, y, id) {
+    Session.prototype._addSquare = function (x, y, id, xDir) {
         this.squares.push(new Squares.Square({
             id: id, x : x, y : y,
             color: '#'+(Math.random()*0xFFFFFF<<0).toString(16),
-            speed: [Squares.MIN_SPEED + Math.random(), Squares.MIN_SPEED + Math.random()], 
+            speed: [Squares.MIN_SPEED , Squares.MIN_SPEED], 
             dir: [Math.random() < .5 ? -1 : 1, -1],
             width: this._window_width,
             height: this._window_height

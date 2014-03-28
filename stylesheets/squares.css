@@ -6,46 +6,57 @@ body, h1, section, article, p, button {
 }
 
 body {
-  background: lightblue;
-  font-family: "PT Sans Narrow", sans-serif;
+  background: linear-gradient(lightblue, lightgray);
+  font-family: sans-serif;
   font-weight: bold;
-  font-size: 30px;
+  font-size: 26px;
   letter-spacing: 1px;
+  overflow: hidden;
 }
 article {
   position: absolute;
+  border-radius: 8px;
 }
 .overlay {
-  background: #79f;
+  background: #eef;
   opacity: 0.75;
 }
 #intro-screen {
   display: none;
   position: fixed;
-  left: 450px;
-  top: 150px;
-  background:rgba(100,100,255,0.3);
+  top: 50%;
+  left: 50%;
+  margin-top: -300px;
+  margin-left: -300px;
+  width: 500px;
+  height: 500px;
+  background:rgba(0,70,200,0.4);
+  border-radius: 30px;
   padding: 75px;
-  z-index: 1;
+  z-index: 99;
 }
 #intro-screen h1 {
-  font-size: 72px;
+  font-family: "PT Sans Narrow";
+  font-size: 150px;
   text-align: center;
+  color: transparent;
+  text-shadow: white 0 0px 0px;
   text-transform: uppercase;
-  color: #fff;
 }
 #intro-screen p {
   text-align: center;
   color: #fff;
+  margin: 10px 0;
 }
 #intro-screen button {
   margin: 20px 150px;
   background: #449;
   letter-spacing: 3px;
-  font-size: 26px;
+  font-size: 40px;
   font-weight: bold;
   color: white;
   cursor: pointer;
+  width: 200px;
   border: 1px solid white;
   border-radius: 10px;
   padding: 20px;
